@@ -1,12 +1,12 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
-import { movieApis } from '../services/movies';
+import movieReducer from './slices/movie.slice'
 
 export const store = configureStore({
   reducer: {
-    [movieApis.reducerPath]: movieApis.reducer
+    movie: movieReducer
   },
   middleware: (getDefaultMiddleware) => {
-    return getDefaultMiddleware().concat(movieApis.middleware)
+    return getDefaultMiddleware()
   },
 });
 

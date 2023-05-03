@@ -1,40 +1,59 @@
 import { Grid, CircularProgress, Pagination } from "@mui/material";
 import MovieItem from "../MovieItem";
 import "./styles.css";
-import { FC, useEffect, useState } from "react";
-import { useGetMoviesQuery } from "../../services/movies";
+import { FC, useEffect } from "react";
 import Typography from "@mui/material/Typography";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { fetchMovies } from "../../api/movie";
+import {
+  setCurrentMovie,
+  setMovies,
+  setPage,
+} from "../../app/slices/movie.slice";
+import ModalDetail from "../ModalDetail";
 
 interface IProps {
   searchText: string;
 }
 
 const MovieList: FC<IProps> = ({ searchText }) => {
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const { isFetching, isLoading, data } = useGetMoviesQuery(
-    { searchText, page: currentPage },
-    {
-      refetchOnMountOrArgChange: 1000,
-    }
-  );
+  const dispatch = useAppDispatch();
+  const {
+    total,
+    currentPage,
+    movies,
+    moviesStatus,
+    currentMovieStatus,
+    currentMovie,
+  } = useAppSelector((state) => state.movie);
 
   useEffect(() => {
-    setCurrentPage(1);
-  }, [searchText]);
+    if (searchText) {
+      dispatch(setPage(1));
+      dispatch(fetchMovies({ searchText, page: 1 }));
+    } else {
+      dispatch(setMovies([]));
+    }
+  }, [searchText, dispatch]);
 
   const handleChangePage = (page: number) => {
-    setCurrentPage(page);
+    dispatch(setPage(page));
+    dispatch(fetchMovies({ searchText, page }));
+  };
+
+  const handleCloseModal = () => {
+    dispatch(setCurrentMovie(null));
   };
 
   if (!searchText || searchText.length < 2) {
     return null;
   }
 
-  if (isLoading || isFetching) {
+  if (moviesStatus === "fetching") {
     return <CircularProgress />;
   }
 
-  if (!data?.total) {
+  if (!total) {
     return (
       <Typography textAlign="center" width="100%">
         Empty
@@ -45,7 +64,7 @@ const MovieList: FC<IProps> = ({ searchText }) => {
   return (
     <>
       <Grid className="m-list" container spacing={2}>
-        {data?.items.map((movie) => (
+        {movies.map((movie) => (
           <Grid key={movie.imdbID} item xs={3}>
             <MovieItem {...movie} />
           </Grid>
@@ -53,10 +72,14 @@ const MovieList: FC<IProps> = ({ searchText }) => {
       </Grid>
       <Pagination
         className="m-pagination"
-        count={data.total || 0}
+        count={total}
         page={currentPage}
         onChange={(e, value) => handleChangePage(value)}
         size="medium"
+      />
+      <ModalDetail
+        open={currentMovieStatus === "fetching" || Boolean(currentMovie)}
+        onClose={handleCloseModal}
       />
     </>
   );

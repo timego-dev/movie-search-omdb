@@ -8,54 +8,56 @@ import {
   Box,
 } from "@mui/material";
 import "./styles.css";
-import { useGetMovieByIdQuery } from "../../services/movies";
+import { useAppSelector } from "../../app/hooks";
 
 interface IProps {
-  id: string;
   open: boolean;
   onClose: Function;
 }
 
-const ModalDetail: FC<IProps> = ({ id, onClose, open }) => {
-  const { data, isFetching, isLoading } = useGetMovieByIdQuery(id);
+const ModalDetail: FC<IProps> = ({ onClose, open }) => {
+  const { currentMovie, currentMovieStatus } = useAppSelector(
+    (state) => state.movie
+  );
+
   const handleClose = () => onClose();
 
   return (
     <Modal open={open} onClose={handleClose}>
-      {isFetching || isLoading ? (
+      {currentMovieStatus === "fetching" ? (
         <CircularProgress />
       ) : (
         <div className="m-item__detail">
           <Grid container spacing={4}>
             <Grid item xs={3}>
-              <img src={data?.Poster} alt="Thumbnail" width="100%" />
+              <img src={currentMovie?.Poster} alt="Thumbnail" width="100%" />
             </Grid>
             <Grid item xs={9}>
-              <Typography variant="h5">{data?.Title}</Typography>
+              <Typography variant="h5">{currentMovie?.Title}</Typography>
               <Typography variant="subtitle1">
-                <strong>Rated: </strong> {data?.Rated}
+                <strong>Rated: </strong> {currentMovie?.Rated}
               </Typography>
               <Typography variant="subtitle1">
-                <strong>Runtime: </strong> {data?.Runtime}
+                <strong>Runtime: </strong> {currentMovie?.Runtime}
               </Typography>
               <Typography variant="subtitle1">
-                <strong>Genre: </strong> {data?.Genre}
+                <strong>Genre: </strong> {currentMovie?.Genre}
               </Typography>
               <Typography variant="subtitle1">
-                <strong>Plot: </strong> {data?.Plot}
+                <strong>Plot: </strong> {currentMovie?.Plot}
               </Typography>
               <Typography variant="subtitle1">
-                <strong>Country: </strong> {data?.Country}
+                <strong>Country: </strong> {currentMovie?.Country}
               </Typography>
               <Typography variant="subtitle1">
-                <strong>Language: </strong> {data?.Language}
+                <strong>Language: </strong> {currentMovie?.Language}
               </Typography>
               <Stack flexDirection="row">
                 <Typography variant="subtitle1">
                   <strong>Rating: </strong>
                 </Typography>
                 <Box marginLeft="0.5em">
-                  {data?.Ratings.map((rating) => (
+                  {currentMovie?.Ratings.map((rating) => (
                     <div>
                       <Typography variant="subtitle1">
                         {rating.Source} : {rating.Value}
@@ -65,7 +67,7 @@ const ModalDetail: FC<IProps> = ({ id, onClose, open }) => {
                 </Box>
               </Stack>
               <Typography variant="subtitle1">
-                <strong>Metascore: </strong> {data?.Metascore}
+                <strong>Metascore: </strong> {currentMovie?.Metascore}
               </Typography>
             </Grid>
           </Grid>
