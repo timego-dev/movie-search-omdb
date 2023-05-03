@@ -1,0 +1,26 @@
+.m-item {
+  background-color: #ffffff;
+  padding: 1em;
+}
+
+.m-item__thumbnail {
+  height: 20vh;
+  width: 100%;
+  background-size: cover;
+}
+.m-item__button {
+  background: #111155;
+  border-radius: 5px;
+  padding: 0.5em 0;
+  text-align: center;
+  color: #ffffff;
+  font-weight: bold;
+  margin-top: 0.5em;
+  cursor: pointer;
+}
+
+.m-item__name {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}

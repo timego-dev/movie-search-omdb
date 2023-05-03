@@ -1,57 +1,39 @@
-import React from 'react';
-import logo from './logo.svg';
-import { Counter } from './features/counter/Counter';
-import './App.css';
+import { Container, TextField, Box } from "@mui/material";
+import Typography from "@mui/material/Typography";
+import "./App.css";
+import { COLORS } from "./constants/colors";
+import MovieList from "./components/MovieList";
+import { useCallback, useState } from "react";
+import { debounce } from "lodash";
 
 function App() {
+  const [searchText, setSearchText] = useState<string>("");
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const handleChange = useCallback(
+    debounce((value: string) => setSearchText(value), 500),
+    []
+  );
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <Counter />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <span>
-          <span>Learn </span>
-          <a
-            className="App-link"
-            href="https://reactjs.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux-toolkit.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux Toolkit
-          </a>
-          ,<span> and </span>
-          <a
-            className="App-link"
-            href="https://react-redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React Redux
-          </a>
-        </span>
-      </header>
-    </div>
+    <Container className="m-container">
+      <Box marginBottom="1em">
+        <Typography
+          marginBottom="20px"
+          color={COLORS.TITLE_COLOR}
+          variant="h3"
+          textAlign="center"
+        >
+          Movie Search Application
+        </Typography>
+        <TextField
+          onChange={(e) => handleChange(e.target.value)}
+          fullWidth
+          variant="outlined"
+          placeholder="Search for movie name... (Please input more than 3 characters)"
+        />
+      </Box>
+      <MovieList searchText={searchText} />
+    </Container>
   );
 }
 

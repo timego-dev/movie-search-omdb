@@ -1,0 +1,9 @@
+.m-item__detail{
+    position:absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 50vw;
+    background-color: #ffffff;
+    padding: 1em;
+}
